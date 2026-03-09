@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { dummyDateTimeData, dummyShowsData } from '../assets/assets';
+import { assets, dummyDateTimeData, dummyShowsData } from '../assets/assets';
 import Loading from '../components/Loading';
 import { ClockIcon } from 'lucide-react';
 import isoTimeFormat from '../lib/isoTimeFormat';
+import BlurCircle from '../components/BlurCircle';
 
 const SeatLayout = () => {
   const { id, date } = useParams();
@@ -22,6 +23,27 @@ const SeatLayout = () => {
       });
     }
   };
+
+  const renderSeats = (row, count = 9) => (
+    <div key={row} className="flex gap-2 mt-2">
+      <div className="flex flex-wrap items-center justify-center gap-2">
+        {Array.from({ length: count }, (_, i) => {
+          const seatId = `${row}${i + 1}`;
+          return (
+            <button
+              key={seatId}
+              onClick={() => handleSeatClick(seatId)}
+              className={`h-8 w-8 rounded border border-primary/60 cursor-pointer ${
+                selectedSeats.includes(seatId) && 'bg-primary text-white'
+              }`}
+            >
+              {seatId}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   useEffect(() => {
     getShow();
@@ -47,7 +69,13 @@ const SeatLayout = () => {
       </div>
 
       {/*Seat Layout*/}
-      <div></div>
+      <div className="relative flex-1 flex flex-col items-center max-md:mt-16">
+        <BlurCircle top="-100PX" left="-100PX" />
+        <BlurCircle top="0" right="0" />
+        <h1 className="text-2xl font-semibold mb-4">Select Your Seat</h1>
+        <img src={assets.screenImage} alt="screen" />
+        <p className="text-gray-400 text-sm mb-6">SCREEN SIDE</p>
+      </div>
     </div>
   ) : (
     <Loading />
