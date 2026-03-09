@@ -3,6 +3,7 @@ import { dummyBookingData } from '../assets/assets';
 import Loading from '../components/Loading';
 import BlurCircle from '../components/BlurCircle';
 import timeFormat from '../lib/timeFormat';
+import dateFormat from '../lib/dateFormat';
 
 const MyBookings = () => {
   const currency = import.meta.env.VITE_CURRENCY;
@@ -44,7 +45,7 @@ const MyBookings = () => {
                 {timeFormat(item.show.movie.runtime)}
               </p>
               <p className="text-gray-400 text-sm mt-auto">
-                {item.show.showDateTime}
+                {dateFormat(item.show.showDateTime)}
               </p>
             </div>
           </div>
