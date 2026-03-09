@@ -5,6 +5,7 @@ import Loading from '../components/Loading';
 import { ClockIcon } from 'lucide-react';
 import isoTimeFormat from '../lib/isoTimeFormat';
 import BlurCircle from '../components/BlurCircle';
+import toast from 'react-hot-toast';
 
 const SeatLayout = () => {
   const { id, date } = useParams();
@@ -22,6 +23,20 @@ const SeatLayout = () => {
         dateTime: dummyDateTimeData,
       });
     }
+  };
+
+  const handleSeatClick = (seatId) => {
+    if (!selectedTime) {
+      return toast('Please select time first');
+    }
+    if (!selectedSeats.includes(seatId) && selectedSeats.length > 4) {
+      return toast('You  can only select 5 seats');
+    }
+    setSelectedSeats((prev) =>
+      prev.includes(seatId)
+        ? prev.filter((seat) => seat !== seatId)
+        : [...prev, seatId],
+    );
   };
 
   const renderSeats = (row, count = 9) => (
