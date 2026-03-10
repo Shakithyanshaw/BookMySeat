@@ -6,6 +6,8 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { dummyDashboardData } from '../../assets/assets';
+import Loading from '../../components/Loading';
+import Title from '../../components/admin/Title';
 
 const Dashbord = () => {
   const currency = import.meta.env.VITE_CURRENCY;
@@ -50,10 +52,12 @@ const Dashbord = () => {
     fetchDashboardData();
   }, []);
 
-  return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+  return !loading ? (
+    <>
+      <Title text1="Admin" text2="Dashboard" />
+    </>
+  ) : (
+    <Loading />
   );
 };
 
