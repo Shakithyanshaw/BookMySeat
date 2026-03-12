@@ -3,6 +3,7 @@ import Title from '../../components/admin/Title';
 import { dummyShowsData } from '../../assets/assets';
 import Loading from '../../components/Loading';
 import { StarIcon } from 'lucide-react';
+import { kConverter } from '../../lib/kConverter';
 
 const AddShows = () => {
   const currency = import.meta.env.VITE_CURRENCY;
@@ -43,7 +44,9 @@ const AddShows = () => {
                     <StarIcon className="w-4 h-4 text-primary fill-primary" />
                     {movie.vote_average.toFixed(1)}
                   </p>
-                  <p className="text-gray-300">{movie.vote_count} Votes</p>
+                  <p className="text-gray-300">
+                    {kConverter(movie.vote_count)} Votes
+                  </p>
                 </div>
               </div>
             </div>
