@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { dummyBookingData } from '../../assets/assets';
+import Loading from '../../components/Loading';
+import Title from '../../components/admin/Title';
 
 const ListBookings = () => {
-  return <div></div>;
+  const currency = import.meta.env.VITE_CURRENCY;
+
+  const [bookings, setBookings] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getAllBookings = async () => {
+    setBookings(dummyBookingData);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    getAllBookings();
+  }, []);
+
+  return !isLoading ? (
+    <>
+      <Title text1="List" text2="Bookings" />
+    </>
+  ) : (
+    <Loading />
+  );
 };
 
 export default ListBookings;
