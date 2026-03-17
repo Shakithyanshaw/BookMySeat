@@ -69,7 +69,7 @@ export const AppProvider = ({ children }) => {
 
   useEffect(() => {
     fetchShows();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (user) {
