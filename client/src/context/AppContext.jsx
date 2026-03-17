@@ -11,7 +11,7 @@ export const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [shows, setShows] = useState([]);
-  const [favouriteMovies, setFavouriteMovies] = useState([]);
+  const [favoriteMovies, setFavoriteMovies] = useState([]);
 
   const { user } = useUser();
   const { getToken } = useAuth();
@@ -36,13 +36,59 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  const fetchShows = async () => {
+    try {
+      const { data } = await axios.get('/api/show/all');
+      if (data.success) {
+        setShows(data.shows);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchFavoriteMovies = async () => {
+    try {
+      const { data } = await axios.get('/api/user/favorites', {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      });
+
+      if (data.success) {
+        setFavoriteMovies(data.movies);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchShows();
+  }, [user]);
+
   useEffect(() => {
     if (user) {
       fetchIsAdmin();
+      fetchFavoriteMovies();
     }
   }, [user]);
 
-  const value = { axios };
+  const value = {
+    axios,
+    fetchIsAdmin,
+    user,
+    getToken,
+    navigate,
+    isAdmin,
+    shows,
+    favoriteMovies,
+    fetchFavoriteMovies,
+  };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };
