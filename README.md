@@ -74,4 +74,3 @@ Includes an Admin Dashboard for managing movies, shows, and bookings.
 - Send reminder email before showtime
 - Notify users when a new movie is added
 
----
