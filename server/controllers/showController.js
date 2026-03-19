@@ -22,7 +22,7 @@ export const getNowPlayingMovies = async (req, res) => {
 //API to add new show to the database
 export const addShow = async (req, res) => {
   try {
-    const { movieId, showInput, showPrice } = req.body;
+    const { movieId, showsInput, showPrice } = req.body;
     let movie = await Movie.findById(movieId);
 
     if (!movie) {
@@ -56,7 +56,7 @@ export const addShow = async (req, res) => {
       movie = await Movie.create(movieDetails);
     }
     const showsToCreate = [];
-    showInput.forEach((show) => {
+    showsInput.forEach((show) => {
       const showDate = show.date;
       show.time.forEach((time) => {
         const dateTimeString = `${showDate}T${time}`;
