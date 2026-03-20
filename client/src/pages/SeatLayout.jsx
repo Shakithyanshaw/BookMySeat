@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { assets, dummyDateTimeData, dummyShowsData } from '../assets/assets';
+import { assets } from '../assets/assets';
 import Loading from '../components/Loading';
 import { ArrowRightIcon, ClockIcon } from 'lucide-react';
 import isoTimeFormat from '../lib/isoTimeFormat';
@@ -45,6 +45,9 @@ const SeatLayout = () => {
     if (!selectedSeats.includes(seatId) && selectedSeats.length > 4) {
       return toast('You can only select 5 seats');
     }
+    if (occupiedSeats.includes(seatId)) {
+      return toast('This seat  is already booked');
+    }
     setSelectedSeats((prev) =>
       prev.includes(seatId)
         ? prev.filter((seat) => seat !== seatId)
@@ -88,13 +91,39 @@ const SeatLayout = () => {
     }
   };
 
+  const bookTickets = async () => {
+    try {
+      if (!user) return toast.error('Please login to proceed');
+
+      if (!selectedTime || !selectedSeats.length)
+        return toast.error('Please select a time and seats');
+
+      const { data } = await axios.post(
+        '/api/booking/create',
+        { showId: selectedTime.showId, selectedSeats },
+        {
+          headers: { Authorization: `Bearer ${await getToken()}` },
+        },
+      );
+
+      if (data.success) {
+        toast.success(data.message);
+        navigate('/my-bookings');
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getShow();
   }, []);
 
   useEffect(() => {
     if (selectedTime) {
-      getOccupideSeats;
+      getOccupideSeats();
     }
   }, [selectedTime]);
 
@@ -137,7 +166,7 @@ const SeatLayout = () => {
         </div>
 
         <button
-          onClick={() => navigate('/my-bookings')}
+          onClick={bookTickets}
           className="flex items-center gap-1 mt-20 px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-full font-medium cursor-pointer active:scale-95"
         >
           Proceed To Checkout
