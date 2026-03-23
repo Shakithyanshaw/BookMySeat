@@ -111,6 +111,46 @@ const sendBookingConfirmationEmail = inngest.createFunction(
   },
 );
 
+// Inngest Function to send reminders
+const sendShowReminders = inngest.createFunction(
+  { id: 'send-show-reminders' },
+  { cron: '0 */8 * * *' }, // Every 8 hours
+  async ({ step }) => {
+    const now = new Date();
+    const in8Hours = new Date(now.getTime() + 8 * 60 * 60 * 1000);
+    const windowStart = new Date(in8Hours.getTime() - 10 * 60 * 1000);
+
+    // Prepare reminder tasks
+    const reminderTasks = await step.run('prepare-reminder-tasks', async () => {
+      const shows = await Show.find({
+        showTime: { $gte: windowStart, $lte: in8Hours },
+      }).populate('movie');
+
+      const tasks = [];
+
+      for (const show of shows) {
+        if (!show.movie || !show.occupiedSeats) continue;
+
+        const userIds = [...new Set(Object.values(show.occupiedSeats))];
+        if (userIds.length === 0) continue;
+
+        const users = await User.find({ _id: { $in: userIds } }).select(
+          'name email',
+        );
+        for (const user of users) {
+          tasks.push({
+            userEmail: user.email,
+            userName: user.name,
+            movieTitle: show.movie.title,
+            showTime: show.showTime,
+          });
+        }
+      }
+      return tasks;
+    });
+  },
+);
+
 export const functions = [
   syncUserCreation,
   syncUserDeletion,
