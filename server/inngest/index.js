@@ -134,9 +134,10 @@ const sendShowReminders = inngest.createFunction(
         const userIds = [...new Set(Object.values(show.occupiedSeats))];
         if (userIds.length === 0) continue;
 
-        const users = await User.find({ _id: { $in: userIds } }).select(
-          'name email',
-        );
+        const users = await User.find({
+          _id: { $in: userIds },
+        }).select('name email');
+
         for (const user of users) {
           tasks.push({
             userEmail: user.email,
@@ -146,8 +147,10 @@ const sendShowReminders = inngest.createFunction(
           });
         }
       }
+
       return tasks;
     });
+
     if (reminderTasks.length === 0) {
       return { sent: 0, message: 'No reminders to send.' };
     }
@@ -160,21 +163,39 @@ const sendShowReminders = inngest.createFunction(
             to: task.userEmail,
             subject: `Reminder: Your movie "${task.movieTitle}" starts soon!`,
             body: `<div style="font-family: Arial, sans-serif; padding: 20px;">
-    <h2>Hello ${task.userName},</h2>
-    <p>This is a quick reminder that your movie:</p>
-    <h3 style="color: #F84565;">"${task.movieTitle}"</h3>
-    <p>
-        is scheduled for <strong>${new Date(task.showTime).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}</strong> at
-        <strong>${new Date(task.showTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' })}</strong>.
-    </p>
-    <p>It starts in approximately <strong>8 hours</strong> - make sure you're ready!</p>
-    <br/>
-    <p>Enjoy the show!<br/>QuickShow Team</p>
-</div>`,
+                    <h2>Hello ${task.userName},</h2>
+                     <p>This is a quick reminder that your movie:</p>
+                    <h3 style="color: #F84565;">"${task.movieTitle}"</h3>
+                    <p>
+                       is scheduled for <strong>${new Date(
+                         task.showTime,
+                       ).toLocaleDateString('en-US', {
+                         timeZone: 'Asia/Kolkata',
+                       })}</strong> at
+                       <strong>${new Date(task.showTime).toLocaleTimeString(
+                         'en-US',
+                         {
+                           timeZone: 'Asia/Kolkata',
+                         },
+                       )}</strong>.
+                    </p>
+                    <p>It starts in approximately <strong>8 hours</strong> - make sure you're ready!</p>
+                     <br/>
+                      <p>Enjoy the show!<br/>QuickShow Team</p>
+                      </div>`,
           }),
         ),
       );
     });
+
+    const sent = results.filter((r) => r.status === 'fulfilled').length;
+    const failed = results.length - sent;
+
+    return {
+      sent,
+      failed,
+      message: `Sent ${sent} reminder(s), ${failed} failed.`,
+    };
   },
 );
 
