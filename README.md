@@ -8,9 +8,7 @@ Includes an Admin Dashboard for managing movies, shows, and bookings.
 
 ## 🚀 Live Demo
 
-🔗 Live URL: https://your-live-link.com  
-🔗 Frontend Repo: https://github.com/yourusername/frontend  
-🔗 Backend Repo: https://github.com/yourusername/backend
+🔗 Live URL: https: https://quickshow-omega-ten.vercel.app 
 
 ---
 
