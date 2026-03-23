@@ -148,6 +148,33 @@ const sendShowReminders = inngest.createFunction(
       }
       return tasks;
     });
+    if (reminderTasks.length === 0) {
+      return { sent: 0, message: 'No reminders to send.' };
+    }
+
+    // Send reminder emails
+    const results = await step.run('send-all-reminders', async () => {
+      return await Promise.allSettled(
+        reminderTasks.map((task) =>
+          sendEmail({
+            to: task.userEmail,
+            subject: `Reminder: Your movie "${task.movieTitle}" starts soon!`,
+            body: `<div style="font-family: Arial, sans-serif; padding: 20px;">
+    <h2>Hello ${task.userName},</h2>
+    <p>This is a quick reminder that your movie:</p>
+    <h3 style="color: #F84565;">"${task.movieTitle}"</h3>
+    <p>
+        is scheduled for <strong>${new Date(task.showTime).toLocaleDateString('en-US', { timeZone: 'Asia/Kolkata' })}</strong> at
+        <strong>${new Date(task.showTime).toLocaleTimeString('en-US', { timeZone: 'Asia/Kolkata' })}</strong>.
+    </p>
+    <p>It starts in approximately <strong>8 hours</strong> - make sure you're ready!</p>
+    <br/>
+    <p>Enjoy the show!<br/>QuickShow Team</p>
+</div>`,
+          }),
+        ),
+      );
+    });
   },
 );
 
