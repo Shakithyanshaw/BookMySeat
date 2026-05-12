@@ -7,10 +7,10 @@ Includes an Admin Dashboard for managing movies, shows, and bookings.
 ---
 
 ## 🚀 Live Demo
-
-🔗 Live URL: https: https://quickshow-omega-ten.vercel.app 
+[https://prescripto.vercel.app/](https://quickshow-omega-ten.vercel.app/)
 
 ---
+
 
 ## 🛠️ Tech Stack
 
